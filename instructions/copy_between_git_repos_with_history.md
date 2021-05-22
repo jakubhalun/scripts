@@ -51,6 +51,7 @@ git branch source_project remotes/source_project/master
 git merge source_project --allow-unrelated-histories
 ```
 <span style="color:gray; font-size: .8rem">_Note: allow-unrelated-histories is required for this operation since git 2.9._</span>
+
 Remove source project from remote:
 ```
 git remote rm source_project
