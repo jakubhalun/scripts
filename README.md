@@ -48,7 +48,8 @@ script is safe to run repeatedly (e.g. to pick up newly created repos).
 
 ```bash
 pip install requests python-dotenv
-python git/clone_all_repos.py USERNAME [TARGET_DIR]
+python git/clone_all_repos.py USERNAME [TARGET_DIR]          # SSH (default)
+python git/clone_all_repos.py USERNAME [TARGET_DIR] --https  # HTTPS with token
 ```
 
 ---
