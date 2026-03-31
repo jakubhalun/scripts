@@ -2,6 +2,10 @@
 """
 Clone all GitHub repositories owned by the authenticated user.
 
+Repositories that already exist in the target directory structure are
+skipped automatically, so the script is safe to run repeatedly (e.g. to
+pick up newly created repos).
+
 Setup:
   1. Create a fine-grained personal access token at:
      https://github.com/settings/tokens

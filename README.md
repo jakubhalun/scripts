@@ -23,7 +23,9 @@ Windows CMD equivalents (in `git/windows_cmd/`):
 ### Clone All Repositories
 
 [`git/clone_all_repos.py`](git/clone_all_repos.py) — clone **all** GitHub repositories
-owned by the authenticated user into an organized directory structure:
+owned by the authenticated user into an organized directory structure.
+Repositories that already exist in the target directory are skipped, so the
+script is safe to run repeatedly (e.g. to pick up newly created repos).
 
 ```
 <target_dir>/
