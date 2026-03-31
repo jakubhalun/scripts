@@ -77,6 +77,9 @@
 - Add tests only when they bring real value and fit the repository style.
 - Do not generate fake tests that only assert trivial behavior.
 
+Workflow & Version Control
+- **No Auto-Committing:** NEVER attempt to commit, push, or stash changes on your own. Only provide the code or shell commands. Leave all Git operations and version control management strictly to the user.
+
 ## What to avoid
 
 - Do not add boilerplate just to make the solution look more advanced.
