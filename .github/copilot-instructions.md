@@ -54,7 +54,7 @@
 - Do not include commands that are unnecessary for the solution.
 
 ## Git and repository operations
-
+- **No Auto-Committing:** NEVER attempt to commit, push, or stash changes on your own. Only provide the code or shell commands. Leave all Git operations and version control management strictly to the user.
 - Be careful with destructive operations.
 - Do not suggest or generate commands that rewrite history, force-push, delete branches, delete tags, or remove files unless the user explicitly asks for that.
 - Before generating commands that modify a repository, prefer safer variants where possible.
@@ -76,9 +76,6 @@
 - When relevant, include small usage examples.
 - Add tests only when they bring real value and fit the repository style.
 - Do not generate fake tests that only assert trivial behavior.
-
-Workflow & Version Control
-- **No Auto-Committing:** NEVER attempt to commit, push, or stash changes on your own. Only provide the code or shell commands. Leave all Git operations and version control management strictly to the user.
 
 ## What to avoid
 
