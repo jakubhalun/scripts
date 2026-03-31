@@ -2,6 +2,13 @@
 """
 Clone all GitHub repositories owned by the authenticated user.
 
+Repositories that already exist in the target directory structure are
+skipped automatically, so the script is safe to run repeatedly (e.g. to
+pick up newly created repos).
+
+By default, repositories are cloned over SSH (git@github.com:...).
+Pass --https to clone over HTTPS with token authentication instead.
+
 Setup:
   1. Create a fine-grained personal access token at:
      https://github.com/settings/tokens
@@ -16,6 +23,7 @@ Setup:
 Commands:
   pip install requests python-dotenv
   python clone_all_repos.py USERNAME [TARGET_DIR]
+  python clone_all_repos.py USERNAME [TARGET_DIR] --https
 """
 
 import argparse
@@ -80,7 +88,7 @@ def has_outside_collaborators(token, owner, repo_name):
     return None
 
 
-def clone_repo(username, token, full_name, target_dir):
+def clone_repo(username, token, full_name, target_dir, *, use_ssh=True):
     repo_name = full_name.split("/")[-1]
     dest = target_dir / repo_name
 
@@ -88,7 +96,10 @@ def clone_repo(username, token, full_name, target_dir):
         print(f"  [skip] {repo_name} (already exists)")
         return
 
-    clone_url = f"https://{username}:{token}@github.com/{full_name}.git"
+    if use_ssh:
+        clone_url = f"git@github.com:{full_name}.git"
+    else:
+        clone_url = f"https://{username}:{token}@github.com/{full_name}.git"
     print(f"  [clone] {repo_name} ...")
     result = subprocess.run(
         ["git", "clone", "--quiet", clone_url, str(dest)],
@@ -112,6 +123,12 @@ def main():
         default=".",
         help="target directory (default: current directory)",
     )
+    parser.add_argument(
+        "--https",
+        action="store_true",
+        dest="use_https",
+        help="clone over HTTPS with token auth (default: SSH)",
+    )
     args = parser.parse_args()
 
     # Load .env from CWD, then from the script's own directory as fallback
@@ -126,6 +143,7 @@ def main():
         sys.exit(1)
 
     username = args.username
+    use_ssh = not args.use_https
     target = Path(args.target_dir).resolve()
 
     # Fetch repos
@@ -155,7 +173,8 @@ def main():
     if public_repos:
         print(f"Public repositories ({len(public_repos)}):")
         for repo in sorted(public_repos, key=lambda r: r["name"].lower()):
-            clone_repo(username, token, repo["full_name"], public_dir)
+            clone_repo(username, token, repo["full_name"], public_dir,
+                       use_ssh=use_ssh)
         print()
 
     # --- Private repos (with optional shared detection) ---
@@ -176,12 +195,14 @@ def main():
 
             print(f"Private repositories ({len(non_shared)}):")
             for repo in sorted(non_shared, key=lambda r: r["name"].lower()):
-                clone_repo(username, token, repo["full_name"], private_dir)
+                clone_repo(username, token, repo["full_name"], private_dir,
+                           use_ssh=use_ssh)
             print()
 
             print(f"Shared private repositories ({len(shared)}):")
             for repo in sorted(shared, key=lambda r: r["name"].lower()):
-                clone_repo(username, token, repo["full_name"], shared_dir)
+                clone_repo(username, token, repo["full_name"], shared_dir,
+                           use_ssh=use_ssh)
             print()
         else:
             if not can_detect:
@@ -190,12 +211,14 @@ def main():
                 print("All private repos will be placed in private/.\n")
             print(f"Private repositories ({len(private_repos)}):")
             for repo in sorted(private_repos, key=lambda r: r["name"].lower()):
-                clone_repo(username, token, repo["full_name"], private_dir)
+                clone_repo(username, token, repo["full_name"], private_dir,
+                           use_ssh=use_ssh)
             print()
 
     # --- Profile repo (username/username) ---
     print("Profile repository:")
-    clone_repo(username, token, f"{username}/{username}", profile_dir)
+    clone_repo(username, token, f"{username}/{username}", profile_dir,
+               use_ssh=use_ssh)
     print()
 
     print("Done.")
