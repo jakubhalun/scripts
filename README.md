@@ -11,6 +11,7 @@ Shell scripts for batch operations on multiple local repositories:
 | Script | Description |
 |--------|-------------|
 | [`git/currentBranchInfoAll.sh`](git/currentBranchInfoAll.sh) | Print current branch for every git repository in the current directory |
+| [`git/mainBranchAndPull.sh`](git/mainBranchAndPull.sh) | Switch to `main` (or `master`) branch and run `git pull` for every git repository found at any depth below the given directory (default: current) |
 | [`git/pullAll.sh`](git/pullAll.sh) | Run `git pull` on every git repository in the current directory |
 
 Windows CMD equivalents (in `git/windows_cmd/`):
