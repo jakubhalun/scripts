@@ -66,3 +66,11 @@ Handy one-liners collected in [`commands.md`](commands.md).
 Step-by-step guides:
 
 - [Copy code between git repositories with preserved history](instructions/copy_between_git_repos_with_history.md)
+
+---
+
+## Varia
+
+| Script | Description |
+|--------|-------------|
+| [`varia/download-files-from-webpage.ps1`](varia/download-files-from-webpage.ps1) | Download media files from a webpage, especially useful for plain "index of" directory listings |
