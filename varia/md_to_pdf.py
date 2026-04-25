@@ -114,7 +114,7 @@ def read_file(filepath: Path) -> str | None:
 def md_to_html(content: str, filename: str) -> str | None:
     """Convert Markdown content to HTML fragment. Returns None on error."""
     try:
-        return markdown.markdown(content, extensions=MD_EXTENSIONS)
+        return markdown.markdown(content, extensions=MD_EXTENSIONS, tab_length=2)
     except Exception as e:
         print(
             f"  Warning: failed to parse '{filename}' as Markdown: {e}",
