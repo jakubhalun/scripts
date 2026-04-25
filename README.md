@@ -74,3 +74,24 @@ Step-by-step guides:
 | Script | Description |
 |--------|-------------|
 | [`varia/download-files-from-webpage.ps1`](varia/download-files-from-webpage.ps1) | Download media files from a webpage, especially useful for plain "index of" directory listings |
+| [`varia/md_to_pdf.py`](varia/md_to_pdf.py) | Merge all Markdown files from a directory into a single PDF, sorted alphabetically by filename |
+
+### Markdown to PDF
+
+[`varia/md_to_pdf.py`](varia/md_to_pdf.py) — convert **all** `.md` files from a directory into one PDF file.
+Files are included in alphabetical order (case-insensitive sort by filename).
+Supports non-English content (Polish, German, etc.) using Unicode-aware fonts.
+Invalid or unreadable files are skipped with a warning; the script exits with an error if no valid files are found.
+
+**Setup:**
+
+```bash
+pip install markdown weasyprint
+```
+
+**Usage:**
+
+```bash
+python varia/md_to_pdf.py OUTPUT.pdf                    # .md files from current directory
+python varia/md_to_pdf.py --dir /path/to/docs OUTPUT.pdf  # .md files from specified directory
+```
