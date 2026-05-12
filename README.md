@@ -103,6 +103,7 @@ python3 varia/md_to_pdf.py --dir /path/to/docs OUTPUT.pdf  # .md files from spec
 | Script | Description |
 |--------|-------------|
 | [`pdf/images_to_pdf.py`](pdf/images_to_pdf.py) | Combine all images from a directory into a single PDF, one image per A4 page |
+| [`pdf/unlock_pdf.py`](pdf/unlock_pdf.py) | Remove password protection from a PDF file |
 
 ### Images to PDF
 
@@ -123,4 +124,23 @@ pip install Pillow reportlab
 python3 pdf/images_to_pdf.py                              # images from current directory → output.pdf
 python3 pdf/images_to_pdf.py --dir /path/to/images        # images from specified directory → output.pdf
 python3 pdf/images_to_pdf.py --dir /path/to/images --output result.pdf
+```
+
+### Unlock PDF
+
+[`pdf/unlock_pdf.py`](pdf/unlock_pdf.py) — remove password protection from a PDF file.
+Prompts for the password securely (no terminal echo) and saves the decrypted content to a new file
+with an `unlocked_` prefix in the same directory as the original.
+
+**Setup:**
+
+```bash
+pip install pikepdf
+```
+
+**Usage:**
+
+```bash
+python3 pdf/unlock_pdf.py protected.pdf            # → unlocked_protected.pdf
+python3 pdf/unlock_pdf.py /path/to/protected.pdf   # → /path/to/unlocked_protected.pdf
 ```
