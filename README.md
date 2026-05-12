@@ -4,6 +4,20 @@ A collection of useful scripts and instructions for everyday development tasks.
 
 ---
 
+## Table of Contents
+
+- [Git](#git)
+  - [Clone All Repositories](#clone-all-repositories)
+- [PDF](#pdf)
+  - [Images to PDF](#images-to-pdf)
+  - [Unlock PDF](#unlock-pdf)
+- [Varia](#varia)
+  - [Markdown to PDF](#markdown-to-pdf)
+- [Commands](#commands)
+- [Instructions](#instructions)
+
+---
+
 ## Git
 
 Shell scripts for batch operations on multiple local repositories:
