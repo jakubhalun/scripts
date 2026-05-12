@@ -92,6 +92,55 @@ pip install markdown weasyprint
 **Usage:**
 
 ```bash
-python varia/md_to_pdf.py OUTPUT.pdf                    # .md files from current directory
-python varia/md_to_pdf.py --dir /path/to/docs OUTPUT.pdf  # .md files from specified directory
+python3 varia/md_to_pdf.py OUTPUT.pdf                    # .md files from current directory
+python3 varia/md_to_pdf.py --dir /path/to/docs OUTPUT.pdf  # .md files from specified directory
+```
+
+---
+
+## PDF
+
+| Script | Description |
+|--------|-------------|
+| [`pdf/images_to_pdf.py`](pdf/images_to_pdf.py) | Combine all images from a directory into a single PDF, one image per A4 page |
+| [`pdf/unlock_pdf.py`](pdf/unlock_pdf.py) | Remove password protection from a PDF file |
+
+### Images to PDF
+
+[`pdf/images_to_pdf.py`](pdf/images_to_pdf.py) — convert **all** `.jpg`, `.jpeg`, and `.png` images from a directory into one PDF file.
+Images are sorted alphabetically (case-insensitive) and each is placed on a separate A4 portrait page.
+Each image is scaled to the maximum size that fits the page while preserving its aspect ratio, then centered.
+Corrupted or unreadable files are skipped with a warning.
+
+**Setup:**
+
+```bash
+pip install Pillow reportlab
+```
+
+**Usage:**
+
+```bash
+python3 pdf/images_to_pdf.py                              # images from current directory → output.pdf
+python3 pdf/images_to_pdf.py --dir /path/to/images        # images from specified directory → output.pdf
+python3 pdf/images_to_pdf.py --dir /path/to/images --output result.pdf
+```
+
+### Unlock PDF
+
+[`pdf/unlock_pdf.py`](pdf/unlock_pdf.py) — remove password protection from a PDF file.
+Prompts for the password securely (no terminal echo) and saves the decrypted content to a new file
+with an `unlocked_` prefix in the same directory as the original.
+
+**Setup:**
+
+```bash
+pip install pikepdf
+```
+
+**Usage:**
+
+```bash
+python3 pdf/unlock_pdf.py protected.pdf            # → unlocked_protected.pdf
+python3 pdf/unlock_pdf.py /path/to/protected.pdf   # → /path/to/unlocked_protected.pdf
 ```
