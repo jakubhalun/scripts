@@ -55,20 +55,6 @@ python git/clone_all_repos.py USERNAME [TARGET_DIR] --https  # HTTPS with token
 
 ---
 
-## Commands
-
-Handy one-liners collected in [`commands.md`](commands.md).
-
----
-
-## Instructions
-
-Step-by-step guides:
-
-- [Copy code between git repositories with preserved history](instructions/copy_between_git_repos_with_history.md)
-
----
-
 ## PDF
 
 | Script | Description |
@@ -144,3 +130,19 @@ pip install markdown weasyprint
 python3 varia/md_to_pdf.py OUTPUT.pdf                    # .md files from current directory
 python3 varia/md_to_pdf.py --dir /path/to/docs OUTPUT.pdf  # .md files from specified directory
 ```
+
+---
+
+## Commands
+
+Handy one-liners collected in [`commands.md`](commands.md).
+
+---
+
+## Instructions
+
+Step-by-step guides:
+
+- [Copy code between git repositories with preserved history](instructions/copy_between_git_repos_with_history.md)
+
+---
