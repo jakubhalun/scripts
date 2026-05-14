@@ -125,7 +125,33 @@ python3 pdf/unlock_pdf.py /path/to/protected.pdf   # → /path/to/unlocked_prote
 | [`varia/download-files-from-webpage.ps1`](varia/download-files-from-webpage.ps1) | Download media files from a webpage, especially useful for plain "index of" directory listings |
 | [`varia/md_to_pdf.py`](varia/md_to_pdf.py) | Merge all Markdown files from a directory into a single PDF, sorted alphabetically by filename |
 
-### Markdown to PDF
+### Download Files from Webpage
+
+[`varia/download-files-from-webpage.ps1`](varia/download-files-from-webpage.ps1) — scan a webpage for file links and download them all into a local directory.
+Skips `.html`, `.php`, and bare directory links. Handles URL-encoded filenames and replaces characters invalid on Windows.
+
+Each download is validated against the `Content-Length` response header (when present) — if the received file size does not match, the download is retried and the incomplete file is discarded. On failure, no partial or corrupt file is written to disk.
+
+Requests are retried on any error (network failure, HTTP error codes such as 429, 503, 502, 504, or non-standard server-specific codes) with exponential backoff: first retry after 10 s, then 20 s, 40 s, and so on.
+
+**Usage:**
+
+```powershell
+# Download all files from an index page into the current directory
+.\varia\download-files-from-webpage.ps1 -PageUrl "https://example.com/files/"
+
+# Specify an output directory
+.\varia\download-files-from-webpage.ps1 -PageUrl "https://example.com/files/" -OutputDir "C:\Downloads\MyFiles"
+
+# Allow more retries (default is 3)
+.\varia\download-files-from-webpage.ps1 -PageUrl "https://example.com/files/" -MaxRetries 5
+```
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `-PageUrl` | *(required)* | URL of the page to scan for downloadable links |
+| `-OutputDir` | `.` | Directory where files are saved (created if it does not exist) |
+| `-MaxRetries` | `3` | Maximum number of retry attempts per request on failure |
 
 [`varia/md_to_pdf.py`](varia/md_to_pdf.py) — convert **all** `.md` files from a directory into one PDF file.
 Files are included in alphabetical order (case-insensitive sort by filename).

@@ -2,10 +2,93 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$PageUrl,
 
-    [string]$OutputDir = "."
+    [string]$OutputDir = ".",
+
+    [int]$MaxRetries = 3
 )
 
 Add-Type -AssemblyName System.Web
+
+function Invoke-WebRequestWithRetry {
+    param(
+        [hashtable]$Params,
+        [int]$MaxRetries
+    )
+
+    $attempt = 0
+    while ($true) {
+        try {
+            return Invoke-WebRequest @Params
+        } catch {
+            if ($attempt -ge $MaxRetries) {
+                throw
+            }
+            $waitSec = [int](10 * [Math]::Pow(2, $attempt))
+            Write-Warning "Request failed (attempt $($attempt + 1)/$($MaxRetries + 1)): $_"
+            Write-Warning "Retrying in ${waitSec}s..."
+            Start-Sleep -Seconds $waitSec
+            $attempt++
+        }
+    }
+}
+
+function Invoke-FileDownloadWithRetry {
+    param(
+        [string]$Uri,
+        [string]$Destination,
+        [int]$MaxRetries
+    )
+
+    $tempFile = "$Destination.tmp"
+    $attempt = 0
+
+    while ($true) {
+        if (Test-Path -LiteralPath $tempFile) {
+            Remove-Item -LiteralPath $tempFile -Force
+        }
+
+        $downloadOk = $false
+        try {
+            $response = Invoke-WebRequest -Uri $Uri -OutFile $tempFile -PassThru
+            $contentLength = $null
+            if ($response.Headers.ContainsKey('Content-Length')) {
+                $contentLength = [long]$response.Headers['Content-Length']
+            }
+
+            if ($null -ne $contentLength) {
+                $actualSize = (Get-Item -LiteralPath $tempFile).Length
+                if ($actualSize -ne $contentLength) {
+                    throw "Size mismatch: expected $contentLength bytes, got $actualSize bytes"
+                }
+            }
+
+            $downloadOk = $true
+        } catch {
+            if (Test-Path -LiteralPath $tempFile) {
+                Remove-Item -LiteralPath $tempFile -Force
+            }
+
+            if ($attempt -ge $MaxRetries) {
+                throw
+            }
+
+            $waitSec = [int](10 * [Math]::Pow(2, $attempt))
+            Write-Warning "Download failed (attempt $($attempt + 1)/$($MaxRetries + 1)): $_"
+            Write-Warning "Retrying in ${waitSec}s..."
+            Start-Sleep -Seconds $waitSec
+            $attempt++
+            continue
+        }
+
+        if ($downloadOk) {
+            if (Test-Path -LiteralPath $Destination) {
+                Remove-Item -LiteralPath $Destination -Force
+            }
+            Move-Item -LiteralPath $tempFile -Destination $Destination
+            return
+        }
+    }
+}
 
 # Create output directory if needed
 if (-not (Test-Path -LiteralPath $OutputDir)) {
@@ -13,9 +96,9 @@ if (-not (Test-Path -LiteralPath $OutputDir)) {
 }
 
 try {
-    $pageResponse = Invoke-WebRequest -Uri $PageUrl -UseBasicParsing
+    $pageResponse = Invoke-WebRequestWithRetry -Params @{ Uri = $PageUrl; UseBasicParsing = $true } -MaxRetries $MaxRetries
 } catch {
-    Write-Error "Failed to download page: $PageUrl"
+    Write-Error "Failed to download page: $PageUrl`n$_"
     exit 1
 }
 
@@ -68,8 +151,8 @@ foreach ($href in $rawLinks) {
         Write-Host "Downloading: $fileUri"
         Write-Host "Saving as:  $destination"
 
-        Invoke-WebRequest -Uri $fileUri.AbsoluteUri -OutFile $destination
+        Invoke-FileDownloadWithRetry -Uri $fileUri.AbsoluteUri -Destination $destination -MaxRetries $MaxRetries
     } catch {
-        Write-Warning "Failed to download: $href"
+        Write-Warning "Failed to download: $href`n$_"
     }
 }
