@@ -12,6 +12,7 @@ A collection of useful scripts and instructions for everyday development tasks.
   - [Images to PDF](#images-to-pdf)
   - [Unlock PDF](#unlock-pdf)
 - [Varia](#varia)
+  - [Download Files from Webpage](#download-files-from-webpage)
   - [Markdown to PDF](#markdown-to-pdf)
 - [Commands](#commands)
 - [Instructions](#instructions)
