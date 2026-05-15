@@ -122,8 +122,45 @@ python3 pdf/unlock_pdf.py /path/to/protected.pdf   # → /path/to/unlocked_prote
 
 | Script | Description |
 |--------|-------------|
-| [`varia/download-files-from-webpage.ps1`](varia/download-files-from-webpage.ps1) | Download media files from a webpage, especially useful for plain "index of" directory listings |
+| [`varia/download_files_from_webpage.sh`](varia/download_files_from_webpage.sh) | Download media files from a webpage, especially useful for plain "index of" directory listings |
 | [`varia/md_to_pdf.py`](varia/md_to_pdf.py) | Merge all Markdown files from a directory into a single PDF, sorted alphabetically by filename |
+
+
+
+### Download Files from Webpage
+
+[`varia/download_files_from_webpage.sh`](varia/download_files_from_webpage.sh) — download linked files from a webpage (for example simple directory listings such as "index of").
+The script resolves absolute and relative links, skips HTML/PHP pages and directory links, decodes URL-encoded filenames, sanitizes invalid filename characters, and retries failed downloads.
+
+**Requirements:**
+
+- `bash`
+- `wget`
+- `grep` with Perl-regex support (`-P`)
+- `sed`, `sort`, `basename`, `cut`
+
+**Usage:**
+
+```bash
+bash varia/download_files_from_webpage.sh -u <PAGE_URL> [-o <OUTPUT_DIR>] [-r <RETRIES>] [-d <DELAY_SECONDS>]
+```
+
+**Parameters:**
+
+- `-u` (required): page URL containing links to files to download
+- `-o` (optional, default: `.`): output directory
+- `-r` (optional, default: `10`): number of retries per file
+- `-d` (optional, default: `30`): delay (seconds) between retry attempts
+
+**Examples:**
+
+```bash
+# Download to current directory
+bash varia/download_files_from_webpage.sh -u 'https://example.com/files/'
+
+# Download to a custom directory with fewer retries
+bash varia/download_files_from_webpage.sh -u 'https://example.com/files/' -o ./downloads -r 5 -d 15
+```
 
 ### Markdown to PDF
 
