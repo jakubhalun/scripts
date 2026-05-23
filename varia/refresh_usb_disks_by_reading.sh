@@ -1,10 +1,18 @@
 #!/usr/bin/env bash
 set -u
+set -o pipefail
+
+if [ "$EUID" -ne 0 ]; then
+  echo "This script must be run as root."
+  echo "Run it with:"
+  echo "  sudo $0 ${1:-}"
+  exit 1
+fi
 
 passes="${1:-2}"
 
 if ! [[ "$passes" =~ ^[0-9]+$ ]] || [ "$passes" -lt 1 ] || [ "$passes" -gt 10 ]; then
-  echo "Usage: $0 [passes]"
+  echo "Usage: sudo $0 [passes]"
   echo "passes must be an integer from 1 to 10, default: 2"
   exit 1
 fi
@@ -57,7 +65,7 @@ for pass in $(seq 1 "$passes"); do
     echo "Reading $dev, pass $pass of $passes"
     echo "Log: $log"
 
-    sudo dd if="$dev" of=/dev/null bs=16M status=progress iflag=fullblock 2>&1 | tee "$log"
+    dd if="$dev" of=/dev/null bs=16M status=progress iflag=fullblock 2>&1 | tee "$log"
     dd_status=${PIPESTATUS[0]}
 
     if [ "$dd_status" -eq 0 ]; then
