@@ -13,6 +13,7 @@ A collection of useful scripts and instructions for everyday development tasks.
   - [Unlock PDF](#unlock-pdf)
 - [Varia](#varia)
   - [Download Files from Webpage](#download-files-from-webpage)
+  - [Refresh USB Disks by Reading](#refresh-usb-disks-by-reading)
   - [Markdown to PDF](#markdown-to-pdf)
 - [Commands](#commands)
 - [Instructions](#instructions)
@@ -125,7 +126,7 @@ python3 pdf/unlock_pdf.py /path/to/protected.pdf   # → /path/to/unlocked_prote
 |--------|-------------|
 | [`varia/download_files_from_webpage.sh`](varia/download_files_from_webpage.sh) | Download media files from a webpage, especially useful for plain "index of" directory listings |
 | [`varia/md_to_pdf.py`](varia/md_to_pdf.py) | Merge all Markdown files from a directory into a single PDF, sorted alphabetically by filename |
-
+| [`varia/refresh_usb_disks_by_reading.sh`](varia/refresh_usb_disks_by_reading.sh) | Read all detected USB disks (without writing) to help surface read errors, with per-pass logs |
 
 
 ### Download Files from Webpage
@@ -162,6 +163,18 @@ bash varia/download_files_from_webpage.sh -u 'https://example.com/files/'
 # Download to a custom directory with fewer retries
 bash varia/download_files_from_webpage.sh -u 'https://example.com/files/' -o ./downloads -r 5 -d 15
 ```
+
+### Refresh USB Disks by Reading
+
+[`varia/refresh_usb_disks_by_reading.sh`](varia/refresh_usb_disks_by_reading.sh) — detect connected USB disks and read each full device one or more times (`dd` to `/dev/null`) to help identify read issues. The script requires root, asks for explicit `YES` confirmation, writes no data to disks, and creates a log file for each disk/pass.
+
+**Usage:**
+
+```bash
+sudo bash varia/refresh_usb_disks_by_reading.sh [passes]
+```
+
+- `passes` (optional, default: `2`): integer from `1` to `10`
 
 ### Markdown to PDF
 
