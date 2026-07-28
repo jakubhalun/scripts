@@ -1,2 +1,6 @@
 testing_dir/**
 **/.env
+__pycache__/
+*.pyc
+.cache/
+.venv/

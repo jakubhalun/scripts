@@ -15,6 +15,8 @@ A collection of useful scripts and instructions for everyday development tasks.
   - [Download Files from Webpage](#download-files-from-webpage)
   - [Refresh USB Disks by Reading](#refresh-usb-disks-by-reading)
   - [Markdown to PDF](#markdown-to-pdf)
+- [Wikimedia](#wikimedia)
+  - [Commons Duplicate Finder](#commons-duplicate-finder)
 - [Commands](#commands)
 - [Instructions](#instructions)
 
@@ -195,6 +197,55 @@ pip install markdown weasyprint
 python3 varia/md_to_pdf.py OUTPUT.pdf                    # .md files from current directory
 python3 varia/md_to_pdf.py --dir /path/to/docs OUTPUT.pdf  # .md files from specified directory
 ```
+
+---
+
+## Wikimedia
+
+| Script | Description |
+|--------|-------------|
+| [`wikimedia/commons_duplicates/commons_duplicate_finder.py`](wikimedia/commons_duplicates/commons_duplicate_finder.py) | Find likely duplicate photographs among one Wikimedia Commons user's uploads, using file metadata and EXIF only |
+
+### Commons Duplicate Finder
+
+[`wikimedia/commons_duplicates/commons_duplicate_finder.py`](wikimedia/commons_duplicates/commons_duplicate_finder.py) — list **all** files uploaded to
+Wikimedia Commons by a chosen user, group the ones whose EXIF metadata is identical or nearly
+identical, and write a standalone HTML report of the suspicious groups.
+The script is strictly **read-only**: it only sends anonymous `GET` requests to the public MediaWiki
+API and never edits Commons, nominates files or adds templates.
+It uses metadata and EXIF only — no images or thumbnails are downloaded, no visual comparison is
+performed and no perceptual hashes are calculated, so every group it reports is a candidate for
+manual review rather than a confirmed duplicate.
+Requests are sequential and rate-limited (at least one second apart), `429` responses honour
+`Retry-After`, and temporary failures use bounded exponential backoff.
+
+**Setup:**
+
+```bash
+pip install -r wikimedia/commons_duplicates/requirements.txt
+```
+
+**Usage:**
+
+```bash
+python3 wikimedia/commons_duplicates/commons_duplicate_finder.py \
+    --requesting-user RequestingUserName \
+    --target-user ExampleUser                        # → commons-duplicates-ExampleUser.html
+```
+
+**Parameters:**
+
+- `--requesting-user` (required): your own Commons username, used to build an identifiable `User-Agent`
+- `--target-user` (required): the Commons username whose uploads are analyzed
+- `--request-delay` (optional, default: `1.0`): seconds between API requests, minimum `1.0`
+- `--output` (optional): HTML report path
+- `--json-output` (optional): also write the full result as JSON
+- `--include-series` (optional): also report burst sequences and consecutive frames, which are
+  hidden by default because they are series rather than repeated uploads
+
+See [`wikimedia/commons_duplicates/README.md`](wikimedia/commons_duplicates/README.md) for the full
+parameter list, the grouping levels, the scoring weights, caching and the limitations of a
+metadata-only approach.
 
 ---
 
