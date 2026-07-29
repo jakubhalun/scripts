@@ -78,7 +78,7 @@ python git/clone_all_repos.py USERNAME [TARGET_DIR] --https  # HTTPS with token
 | Script | Description |
 |--------|-------------|
 | [`pdf/images_to_pdf.py`](pdf/images_to_pdf.py) | Combine all images from a directory into a single PDF, one image per A4 page |
-| [`pdf/unlock_pdf.py`](pdf/unlock_pdf.py) | Remove password protection from a PDF file |
+| [`pdf/unlock_pdf.py`](pdf/unlock_pdf.py) | Remove password protection from a PDF file and extract its embedded attachments |
 
 ### Images to PDF
 
@@ -107,6 +107,13 @@ python3 pdf/images_to_pdf.py --dir /path/to/images --output result.pdf
 Prompts for the password securely (no terminal echo) and saves the decrypted content to a new file
 with an `unlocked_` prefix in the same directory as the original.
 
+If the source PDF contains embedded files, they are extracted as well: both document-level
+attachments and file attachment annotations are saved as separate files next to the output PDF,
+each named with the output filename as prefix.
+The attachments also stay embedded in the unlocked PDF.
+Names taken from the PDF are reduced to a safe filename, and existing files are never overwritten —
+a `_1`, `_2`, … suffix is added instead.
+
 **Setup:**
 
 ```bash
@@ -118,6 +125,15 @@ pip install pikepdf
 ```bash
 python3 pdf/unlock_pdf.py protected.pdf            # → unlocked_protected.pdf
 python3 pdf/unlock_pdf.py /path/to/protected.pdf   # → /path/to/unlocked_protected.pdf
+```
+
+**Example with attachments:**
+
+```bash
+python3 pdf/unlock_pdf.py report.pdf
+# Unlocked PDF saved to: unlocked_report.pdf
+# Attachment saved to: unlocked_report_invoice.xml
+# Attachment saved to: unlocked_report_annex.pdf
 ```
 
 ---
