@@ -8,6 +8,7 @@ A collection of useful scripts and instructions for everyday development tasks.
 
 - [Git](#git)
   - [Clone All Repositories](#clone-all-repositories)
+  - [Flatten Branch History](#flatten-branch-history)
 - [PDF](#pdf)
   - [Images to PDF](#images-to-pdf)
   - [Unlock PDF](#unlock-pdf)
@@ -29,6 +30,7 @@ Shell scripts for batch operations on multiple local repositories:
 | Script | Description |
 |--------|-------------|
 | [`git/currentBranchInfoAll.sh`](git/currentBranchInfoAll.sh) | Print current branch for every git repository in the current directory |
+| [`git/flatten_branch_history.sh`](git/flatten_branch_history.sh) | Replace a branch history with one new commit after an explicit safety confirmation |
 | [`git/mainBranchAndPull.sh`](git/mainBranchAndPull.sh) | Switch to `main` (or `master`) branch and run `git pull` for every git repository found at any depth below the given directory (default: current) |
 | [`git/pullAll.sh`](git/pullAll.sh) | Run `git pull` on every git repository in the current directory |
 
@@ -70,6 +72,28 @@ pip install requests python-dotenv
 python git/clone_all_repos.py USERNAME [TARGET_DIR]          # SSH (default)
 python git/clone_all_repos.py USERNAME [TARGET_DIR] --https  # HTTPS with token
 ```
+
+### Flatten Branch History
+
+[`git/flatten_branch_history.sh`](git/flatten_branch_history.sh) — replace the complete history of a selected branch with one new commit containing the current files, then push the rewritten branch to the remote with `--force-with-lease`.
+
+This is a destructive history rewrite. The script prints a warning and requires typing `REPLACE HISTORY` before it runs. For non-interactive automation, `--yes` is accepted only when `FLATTEN_BRANCH_HISTORY_CONFIRM=YES` is also set.
+
+**Usage:**
+
+```bash
+bash git/flatten_branch_history.sh main
+bash git/flatten_branch_history.sh main --message "Initial commit"
+bash git/flatten_branch_history.sh main --remote origin
+FLATTEN_BRANCH_HISTORY_CONFIRM=YES bash git/flatten_branch_history.sh main --yes
+```
+
+**Parameters:**
+
+- `<branch>` (required): branch whose history will be replaced, for example `main` or `master`
+- `-m`, `--message` (optional): commit message for the new single commit
+- `-r`, `--remote` (optional, default: `origin`): remote repository name used for fetch and push
+- `-y`, `--yes` (optional): skip the prompt only when `FLATTEN_BRANCH_HISTORY_CONFIRM=YES` is set
 
 ---
 
