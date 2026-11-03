@@ -1,7 +1,28 @@
 #!/usr/bin/env python3
-"""Offline, read-only export of GitHub Copilot CLI conversations for one local repo.
+"""Export locally stored GitHub Copilot CLI conversations for one repository.
 
-Python 3.9+, standard library only. Does not call Copilot, git, or any network service.
+Created with ChatGPT to collect prompts and agent replies without using an AI
+model for extraction. Requires Python 3.9+ and only the standard library; no pip
+packages or virtual environment are needed. Does not call Copilot, git, or any
+network service, and leaves source logs unchanged.
+
+Usage (from this scripts repository):
+    python3 agents/copilot/export_copilot_repo.py --repo /path/to/repo --out /path/to/export
+    python3 agents/copilot/export_copilot_repo.py --help
+
+Reads session-state under --copilot-home (default: COPILOT_HOME or ~/.copilot).
+Matches sessions using stored local repository/workspace paths, including paths
+beneath --repo. Exports messages regardless of the model used and labels assistant
+messages with model metadata when available. Internal subagent messages are
+excluded unless --include-subagents is supplied.
+
+Writes prompts-only.md, conversation.md (separate USER/ASSISTANT sections),
+sessions/<session-id>.md, and manifest.json (sources, counts, parsing warnings).
+The output directory must be empty or absent and outside session-state.
+
+Only locally retained, matching logs can be exported; deleted sessions or logs
+from other machines are not recovered. Tool events and non-text content are not
+included. Exports may contain sensitive prompt/reply text and local paths.
 """
 import argparse
 import json

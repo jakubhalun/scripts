@@ -6,6 +6,8 @@ A collection of useful scripts and instructions for everyday development tasks.
 
 ## Table of Contents
 
+- [Agents](#agents)
+  - [Export Copilot CLI Conversations](#export-copilot-cli-conversations)
 - [Git](#git)
   - [Clone All Repositories](#clone-all-repositories)
 - [PDF](#pdf)
@@ -19,6 +21,61 @@ A collection of useful scripts and instructions for everyday development tasks.
   - [Commons Duplicate Finder](#commons-duplicate-finder)
 - [Commands](#commands)
 - [Instructions](#instructions)
+
+---
+
+## Agents
+
+### Export Copilot CLI Conversations
+
+[`agents/copilot/export_copilot_repo.py`](agents/copilot/export_copilot_repo.py) - export locally stored
+**GitHub Copilot CLI** prompts and agent replies for one local repository to Markdown.
+Created with ChatGPT to collect conversation history without using an AI model for extraction.
+The script works offline, does not call Copilot, Git, or network services, and leaves source logs unchanged.
+It includes messages regardless of the model used, with model labels when available in the logs.
+
+**Requirements:** Python 3.9+ and the standard library only. No `pip install` or virtual environment is needed.
+
+**Usage** (from this scripts repository):
+
+```bash
+python3 agents/copilot/export_copilot_repo.py --repo /path/to/repo --out /path/to/export
+python3 agents/copilot/export_copilot_repo.py --repo /path/to/repo --out /path/to/another-export --include-subagents
+python3 agents/copilot/export_copilot_repo.py --help
+```
+
+**Parameters:**
+
+- `--repo` (required): absolute or relative path to the local repository root.
+- `--out` (required): an empty or nonexistent output directory, preferably outside the repository.
+  It must not be inside the Copilot `session-state` directory.
+- `--copilot-home` (optional): Copilot data directory containing `session-state`;
+  defaults to the `COPILOT_HOME` environment variable, or `~/.copilot` if unset.
+- `--include-subagents` (optional): include messages carrying an `agentId`;
+  by default, only user/root-agent messages are exported.
+
+**Output:**
+
+| File | Contents |
+|------|----------|
+| `prompts-only.md` | User prompts separated by session and timestamp |
+| `conversation.md` | All exported conversations with distinct `USER` and `ASSISTANT` sections |
+| `sessions/<session-id>.md` | One conversation file per exported session |
+| `manifest.json` | Source paths, workspace metadata, session/message counts, and invalid JSONL line warnings |
+
+The script reads `session-state/*/events.jsonl` and `session-state/*.jsonl`,
+using `workspace.yaml` metadata and `session.start` events to match stored absolute
+repository/workspace paths to `--repo` or its subdirectories. It does not match by GitHub
+URL or repository name, so moved repositories or separate worktrees may require the
+original local path (which must still be an existing directory).
+
+Only retained local logs with matching metadata can be exported. Deleted sessions,
+history on other machines, and sessions without matching path metadata are not recovered.
+Only nonempty text from `user.message` and `assistant.message` events is included;
+tool events and non-text content are omitted. Invalid or incomplete JSONL lines are
+skipped and recorded in `manifest.json`. Model labels depend on the available metadata.
+
+Exports can contain sensitive prompts, replies, and local paths. Review them before sharing.
 
 ---
 
